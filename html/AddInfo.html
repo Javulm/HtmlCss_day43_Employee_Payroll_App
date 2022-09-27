@@ -25,13 +25,14 @@
     </header>
     <!-- UC2 Form with header and name-->
     <div class="form-content">
-        <form class="form" action="#" onsubmit="save();return false">
+        <form class="form" action="#" onreset="resetForm()" onsubmit="save()">
             <div class="form-head">
                 Employee Payroll form
             </div>
             <div class="row-content">
                 <label class="label text" for="name">Name</label>
                 <input class="input" type="text" id="name" name="name" placeholder="Your name.." required>
+                <error-output class="text-error" for="text"></error-output>
             </div>
             <!-- UC3 Specify profile pic in the form -->
             <div class="row-content">
@@ -157,8 +158,8 @@
             <div class="buttonParent">
                 <a href="./EmployeePayrollApp.html" class="resetButton button cancelButton">Cancel</a>
                 <div class="submit-reset">
-                    <button type="submit" class="button submitButton" id="submitButton">Submit</button>
-                    <button type="reset" class="resetButton button">Reset</button>
+                    <button type="submit" class="button submitButton" id="submitButton" onclick="submitButton()>Submit</button>
+                    <button type=" reset" class="resetButton button">Reset</button>
                 </div>
             </div>
     </div>
