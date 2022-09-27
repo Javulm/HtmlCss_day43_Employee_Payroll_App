@@ -6,7 +6,7 @@ function validName() {
     const name = document.querySelector('#name');
     const textError = document.querySelector('.text-error');
     name.addEventListener('input', function () {
-        if (name.ariaValueMax.length == 0) {
+        if (name.value.length == 0) {
             textError.textContent = "";
             return;
         }
@@ -31,23 +31,24 @@ function salaryRange() {
     });
 }
 const save = () => {
-    try {
-        let employeePayrollData = createEmployeePayroll();
-
-    }
-    catch (e) {
-        return;
-    }
-    alert(employeePayrollData.toString());
+    let employeePayrollData = createEmployeePayroll();
+    createAndUpdateLocalStorage(employeePayrollData);
 }
 
 const createEmployeePayroll = () => {
     let employeePayrollData = new EmployeePayrollData();
     try {
         employeePayrollData.name = getInputValueById('#name');
+        setTextValue('.text-error', "");
     } catch (e) {
         setTextValue('.text-error', e);
-        throw e;
+    }
+    try {
+        let date = getInputValueById('#day') + " " + getInputValueById('#month') + " " + getInputValueById('#year');
+        employeePayrollData.startDate = new Date(Date.parse(date));
+        setTextValue('.date-error', "");
+    } catch (e) {
+        setTextValue('.date-error', e);
     }
 
     employeePayrollData.profilePic = getSelectedValues('[name=profile]').pop();
@@ -55,43 +56,55 @@ const createEmployeePayroll = () => {
     employeePayrollData.department = getSelectedValues('[name=department]');
     employeePayrollData.salary = getInputValueById('#salary');
     employeePayrollData.note = getInputValueById('#notes');
-    let date = getInputValueById('#day') + " " + getInputValueById('#month') + " " + getInputValueById('#year');
-    employeePayrollData.startDate = new Date(Date.parse(date));
-    setTextValue('.date-error', e)
-    employeePayrollData.date = Date.parse(date);
+    employeePayrollData.id = new Date().getTime() + 1;
     alert(employeePayrollData.toString());
     return employeePayrollData;
 }
-
-const getSelectedValues = (propertyValue) => {
-    let allItems = document.querySelectorAll(propertyValue);
-    let setItems = [];
-    allItems.forEach(item => {
-        if (item.checked == true)
-            setItems.push(item.value);
-    });
-    return setItems;
-}
-
 const getInputValueById = (id) => {
     let value = document.querySelector(id).value;
     return value;
 }
 
-const getInputElementValue = (id) => {
-    let value = document.getElementById(id).value;
-    return value;
+const setTextValue = (id, message) => {
+    const textError = document.querySelector(id);
+    textError.textContent = message;
 }
-
-// UC4 Saving Employee payroll to local storage
-function createAndUpdateStorage(employeePayrollData) {
-    let employeePayrollList = JSON.parse(localStorage.getItem("EmployeePayrollList"));
-    if (employeePayrollList != undefined) {
-        employeePayrollList.push(employeePayrollData);
+const getSelectedValues = (propertyValue) => {
+    let allItems = document.querySelectorAll(propertyValue);
+    let setItems = [];
+    return setItems;
+}
+const createAndUpdateLocalStorage = (empData) => {
+    let dataList = JSON.parse(localStorage.getItem("EmployeePayrollList"));
+    if (dataList != undefined) {
+        dataList.push(empData)
     }
     else {
-        employeePayrollList = [EmployeePayrollData]
+        dataList = [empData];
     }
-    alert(employeePayrollList.toString());
-    localStorage.setItem("EmployeePayrollList", JSON.stringify(employeePayrollList))
+    localStorage.setItem('EmployeePayrollList', JSON.stringify(dataList));
+    alert("data stored with name " + empData.name);
+}
+const resetForm = () => {
+    setTextValue('#name', '');
+    unsetSelectedValues('[name=profile]');
+    unsetSelectedValues('[name=gender]');
+    unsetSelectedValues('[nmae=department]');
+    setValue('#salary', '');
+    setValue('#notes', '');
+    setValue('#day', '1');
+    setValue('#month', 'January');
+    setValue('#year', '2021');
+}
+
+const unsetSelectedValues = (propertyValue) => {
+    let allItems = document.querySelectorAll(propertyValue);
+    allItems.forEach(item => {
+        item.checked = false;
+    });
+}
+
+const setValue = (id, value) => {
+    const element = document.querySelector(id);
+    element.value = value;
 }
